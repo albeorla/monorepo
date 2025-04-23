@@ -49,8 +49,8 @@ runs:
         echo "Monthly budget: \$$CI_COST_BUDGET"
         echo "Actual cost: \$$ACTUAL_COST"
         
-        # Compare with budget
-        if (( $(echo "$ACTUAL_COST > $CI_COST_BUDGET" | bc -l) )); then
+        # Compare with budget - using awk instead of bc for compatibility
+        if (( $(awk 'BEGIN {print ("'$ACTUAL_COST'" > "'$CI_COST_BUDGET'")}') )); then
           echo "::warning::CI job cost \$$ACTUAL_COST exceeds budget \$$CI_COST_BUDGET"
           echo "- ⚠️ Job cost exceeds budget!" >> $GITHUB_STEP_SUMMARY
         else

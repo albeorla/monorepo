@@ -41,8 +41,8 @@ runs:
         echo "CI cost budget: \$$CI_COST_BUDGET"
         echo "Estimated cost: \$$ESTIMATED_COST"
         
-        # Compare with budget using bc for floating-point comparison
-        if (( $(echo "$ESTIMATED_COST > $CI_COST_BUDGET" | bc -l) )); then
+        # Compare with budget - using simple comparison since we control the format
+        if (( $(awk 'BEGIN {print ("'$ESTIMATED_COST'" > "'$CI_COST_BUDGET'")}') )); then
           echo "::error::Estimated CI cost \$$ESTIMATED_COST exceeds budget \$$CI_COST_BUDGET"
           echo "within_budget=false" >> $GITHUB_OUTPUT
           exit 1
