@@ -1,0 +1,105 @@
+---
+# PARA + GTD Rules for Todoist export
+# This file defines how tasks and projects are categorized and enriched
+
+# Regex patterns to apply to task content and description
+regex_rules:
+  - pattern: "@([a-z0-9]+)"
+    field: "context"
+    value: ["$1"]  # Captures contexts like @home, @phone, @computer
+  
+  - pattern: "waiting[:\s]+([^,\.]+)"
+    field: "waiting_on"
+    value: "$1"  # Captures "waiting: John" or "waiting on Jane"
+  
+  - pattern: "delegate[d]?[:\s]+([^,\.]+)"
+    field: "delegated_to"
+    value: "$1"  # Captures "delegate: Team" or "delegated to Alice"
+  
+  - pattern: "\b(?:low energy|quick)\b"
+    field: "energy"
+    value: "low"  # Tasks marked as low energy or quick
+  
+  - pattern: "\b(?:medium energy|focused)\b"
+    field: "energy"
+    value: "medium"  # Tasks requiring medium focus
+  
+  - pattern: "\b(?:high energy|deep work|deep focus)\b"
+    field: "energy"
+    value: "high"  # Tasks requiring deep focus or high energy
+  
+  - pattern: "\b(\d+)(?:\s+|-)(?:min|minute)s?\b"
+    field: "time_needed"
+    value: "$1"  # Captures "15 min" or "30-minutes" as number of minutes
+  
+  - pattern: "\bsomeday\b|\bmaybe\b|\bconsider\b"
+    field: "someday"
+    value: true  # Marks someday/maybe tasks
+
+# Labels and their special meaning
+label_rules:
+  "next":
+    field: "next_action"
+    value: true
+  
+  "waiting":
+    field: "waiting_on"
+    value: "someone"  # Generic if just labeled waiting
+  
+  "someday":
+    field: "someday"
+    value: true
+  
+  "low":
+    field: "energy"
+    value: "low"
+  
+  "medium":
+    field: "energy"
+    value: "medium"
+  
+  "high":
+    field: "energy"
+    value: "high"
+  
+  "quick":
+    field: "time_needed"
+    value: 5  # 5-minute tasks
+  
+  "short":
+    field: "time_needed"
+    value: 15  # 15-minute tasks
+  
+  "long":
+    field: "time_needed"
+    value: 60  # 60-minute tasks
+  
+  # Contexts
+  "home":
+    field: "context"
+    value: ["home"]
+  
+  "work":
+    field: "context"
+    value: ["work"]
+  
+  "phone":
+    field: "context"
+    value: ["phone"]
+  
+  "computer":
+    field: "context"
+    value: ["computer"]
+  
+  "errands":
+    field: "context"
+    value: ["errands"]
+
+# Force specific projects into certain PARA buckets by their Todoist ID
+# (override the default logic in bucket_for_project)
+bucket_overrides:
+  # Example: Force these projects to specific buckets regardless of due date or age
+  2342342342: "projects"  # Q2 Strategic Plan
+  1234567890: "areas"     # Health & Wellness
+  9876543210: "resources" # Programming Reference
+  5555555555: "archives"  # Completed Courses
