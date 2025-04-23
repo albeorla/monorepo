@@ -1,3 +1,7 @@
 {
-  "module_name": "my_python_module"
+  "module_name": "my_python_module",
+  "module_description": "A Python module in the monorepo",
+  "author": "Monorepo Team",
+  "with_tests": "yes",
+  "include_cli": "yes"
 }

@@ -1,8 +1,9 @@
-load("@rules_python//python:defs.bzl", "py_library", "py_binary")
+load("@rules_python//python:defs.bzl", "py_library", "py_binary", "py_test")
 
 py_library(
     name = "{{cookiecutter.module_name}}_lib",
     srcs = ["{{cookiecutter.module_name}}.py"],
+    visibility = ["//visibility:public"],
 )
 
 py_binary(
@@ -10,4 +11,11 @@ py_binary(
     srcs = ["{{cookiecutter.module_name}}.py"],
     deps = [":{{cookiecutter.module_name}}_lib"],
     main = "{{cookiecutter.module_name}}.py",
+)
+
+py_test(
+    name = "{{cookiecutter.module_name}}_test",
+    srcs = ["test_{{cookiecutter.module_name}}.py"],
+    deps = [":{{cookiecutter.module_name}}_lib"],
+    main = "test_{{cookiecutter.module_name}}.py",
 )
