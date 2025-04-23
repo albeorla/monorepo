@@ -15,9 +15,17 @@ select = [
     "S",   # flake8-bandit
 ]
 
+# Moving these to lint.* is recommended but requires more thorough testing
+# We'll keep it here for simplicity during initial setup
+
 ignore = [
     "D100", # Missing docstring in public module
+    "D101", # Missing docstring in public class
+    "D102", # Missing docstring in public method
+    "D103", # Missing docstring in public function
     "D104", # Missing docstring in public package
+    "D107", # Missing docstring in __init__
+    "D202", # No blank lines allowed after function docstring
     "D203", # one-blank-line-before-class - conflicts with D211
     "D213", # multi-line-summary-second-line - conflicts with D212
 ]
