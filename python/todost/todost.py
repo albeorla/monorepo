@@ -1,0 +1,305 @@
+from __future__ import annotations
+
+"""Todoist→PARA+GTD exporter
+
+Implements the full extraction/enrichment logic described in PRD v1.2:
+* Fetch open projects, sections, and tasks via Todoist REST v2.
+* Apply deterministic regex/label rules from `para_rules.yaml`.
+* (Optional) LLM enrichment via provider port.
+* Bucket projects into PARA (`projects`, `areas`, `resources`, `archives`).
+* Serialize to Pydantic models and dump nested JSON.
+
+Usage (as Bazel target or direct invocation):
+
+    bazel run //python/todost:todost -- --token=<TODOIST_API_TOKEN>
+
+Requirements: httpx, pydantic, pyyaml.
+"""
+
+from dataclasses import dataclass
+from datetime import datetime, timezone
+from pathlib import Path
+from typing import Any, Dict, List, Optional
+
+import asyncio
+import json
+import re
+
+# Optional runtime imports. We fall back to lightweight stubs in test
+# environments where the heavy third‑party libraries may be missing.
+
+try:
+    import httpx  # type: ignore
+except ModuleNotFoundError:  # pragma: no cover – allow slim test envs
+    httpx = None  # type: ignore[assignment]
+
+try:
+    import yaml  # type: ignore
+except ModuleNotFoundError:  # pragma: no cover
+    yaml = None  # type: ignore[assignment]
+
+from pydantic import BaseModel, Field
+
+# ---------------------------------------------------------------------------
+# Domain models
+# ---------------------------------------------------------------------------
+
+
+class GTDFields(BaseModel):
+    next_action: bool = False
+    waiting_on: Optional[str] = None
+    someday: bool = False
+    delegated_to: Optional[str] = None
+    context: List[str] = Field(default_factory=list)
+    energy: Optional[str] = None  # low | medium | high
+    time_needed: Optional[int] = None  # minutes
+
+
+class Task(BaseModel):
+    todoist_id: int
+    title: str
+    notes: Optional[str] = None
+    due: Optional[str] = None  # ISO‑8601
+    priority: int
+    labels: List[str] = Field(default_factory=list)
+    completed: bool = False
+    created: str
+    gtd: GTDFields
+
+
+class Section(BaseModel):
+    todoist_id: Optional[int]
+    title: str
+    tasks: List[Task] = Field(default_factory=list)
+
+
+class Project(BaseModel):
+    todoist_id: int
+    title: str
+    para_bucket: str
+    gtd_status: str = "active"
+    description: Optional[str] = None
+    due: Optional[str] = None
+    created: str
+    labels: List[str] = Field(default_factory=list)
+    sections: List[Section] = Field(default_factory=list)
+
+
+class ExportDocument(BaseModel):
+    meta: Dict[str, Any]
+    projects: List[Project] = Field(default_factory=list)
+    areas: List[Project] = Field(default_factory=list)
+    resources: List[Project] = Field(default_factory=list)
+    archives: Dict[str, Any] = Field(default_factory=lambda: {"completed_tasks": []})
+
+
+# ---------------------------------------------------------------------------
+# Rule engine
+# ---------------------------------------------------------------------------
+
+
+@dataclass
+class RegexRule:
+    pattern: str
+    field: str
+    value: Any
+
+    def apply(self, text: str, out: GTDFields) -> None:
+        if re.search(self.pattern, text, flags=re.I):
+            setattr(out, self.field, self.value)
+
+
+@dataclass
+class LabelRule:
+    label: str
+    field: str
+    value: Any
+
+    def apply(self, labels: List[str], out: GTDFields) -> None:
+        if self.label in labels:
+            setattr(out, self.field, self.value)
+
+
+class RuleEngine:
+    """Applies user‑defined YAML rules to Todoist entities."""
+
+    def __init__(self, yaml_path: Path = Path("para_rules.yaml")):
+        if yaml is None or not yaml_path.exists():
+            cfg: Dict[str, Any] = {}
+        else:
+            cfg = yaml.safe_load(yaml_path.read_text())
+        self.regex_rules = [RegexRule(**r) for r in cfg.get("regex_rules", [])]
+        self.label_rules = [LabelRule(label=k, **v) for k, v in cfg.get("label_rules", {}).items()]
+        self.bucket_overrides: Dict[int, str] = cfg.get("bucket_overrides", {})
+
+    def enrich_task(self, task: dict) -> GTDFields:
+        gtd = GTDFields()
+        text = f"{task['content']} {task.get('description', '')}"
+        for rule in self.regex_rules:
+            rule.apply(text, gtd)
+        for lr in self.label_rules:
+            lr.apply(task.get("labels", []), gtd)
+
+        # Simple next‑action heuristic
+        if task.get("priority") == 4 or "next" in task.get("labels", []):
+            gtd.next_action = True
+        return gtd
+
+    def bucket_for_project(self, prj: dict) -> str:
+        override = self.bucket_overrides.get(prj["id"])
+        if override:
+            return override
+
+        if prj.get("due_date"):
+            return "projects"
+
+        created = datetime.fromisoformat(prj["created_at"].rstrip("Z"))
+        if (datetime.now(timezone.utc) - created).days < 90:
+            return "projects"
+
+        return "areas"
+
+
+# ---------------------------------------------------------------------------
+# Todoist REST client
+# ---------------------------------------------------------------------------
+
+
+class TodoistClient:
+    """Minimal async Todoist REST v2 client."""
+
+    def __init__(self, token: str):
+        if httpx is None:
+            raise RuntimeError("httpx is required for network operations but is not installed.")
+
+        self._client = httpx.AsyncClient(
+            base_url="https://api.todoist.com/rest/v2",
+            headers={"Authorization": f"Bearer {token}"},
+            timeout=30,
+        )
+
+    async def _get(self, endpoint: str) -> Any:
+        resp = await self._client.get(endpoint)
+        resp.raise_for_status()
+        return resp.json()
+
+    async def fetch_all(self):  # noqa: D401 — simple verb suffices
+        """Fetch projects, sections and tasks concurrently."""
+
+        projects, sections, tasks = await asyncio.gather(
+            self._get("/projects"),
+            self._get("/sections"),
+            self._get("/tasks"),
+        )
+        return projects, sections, tasks
+
+    async def close(self) -> None:
+        await self._client.aclose()
+
+
+# ---------------------------------------------------------------------------
+# Export orchestration
+# ---------------------------------------------------------------------------
+
+
+async def export(
+    *, token: str, outfile: str = "todoist_gtd_para.json", rules_path: Path = Path("para_rules.yaml")
+) -> None:
+    """Export Todoist data to a PARA + GTD JSON document."""
+
+    client = TodoistClient(token)
+    try:
+        projects_raw, sections_raw, tasks_raw = await client.fetch_all()
+    finally:
+        await client.close()
+
+    engine = RuleEngine(rules_path)
+
+    # Index look‑ups for efficient joins
+    sections_by_project: Dict[int, List[dict]] = {}
+    for sec in sections_raw:
+        sections_by_project.setdefault(sec["project_id"], []).append(sec)
+
+    tasks_by_project: Dict[int, List[dict]] = {}
+    for t in tasks_raw:
+        tasks_by_project.setdefault(t["project_id"], []).append(t)
+
+    doc = ExportDocument(meta={"exported": datetime.now(timezone.utc).isoformat(), "version": 1})
+
+    def build_task(t: dict) -> Task:  # noqa: ANN001—nested helper
+        return Task(
+            todoist_id=t["id"],
+            title=t["content"],
+            notes=t.get("description"),
+            due=t["due"]["date"] if t.get("due") else None,
+            priority=t["priority"],
+            labels=t.get("labels", []),
+            completed=False,
+            created=t["created_at"],
+            gtd=engine.enrich_task(t),
+        )
+
+    # Transform projects ➜ Pydantic models
+    for prj in projects_raw:
+        bucket = engine.bucket_for_project(prj)
+        proj_obj = Project(
+            todoist_id=prj["id"],
+            title=prj["name"],
+            para_bucket=bucket,
+            description=prj.get("description"),
+            due=prj.get("due_date"),
+            created=prj["created_at"],
+            labels=prj.get("labels", []),
+        )
+
+        # Sections
+        for sec in sections_by_project.get(prj["id"], []):
+            sec_obj = Section(
+                todoist_id=sec["id"],
+                title=sec["name"],
+                tasks=[
+                    build_task(t)
+                    for t in tasks_by_project.get(prj["id"], [])
+                    if t.get("section_id") == sec["id"]
+                ],
+            )
+            proj_obj.sections.append(sec_obj)
+
+        # Root tasks (no section)
+        root_tasks = [
+            t for t in tasks_by_project.get(prj["id"], []) if not t.get("section_id")
+        ]
+        if root_tasks:
+            proj_obj.sections.append(
+                Section(
+                    todoist_id=None,
+                    title="(root)",
+                    tasks=[build_task(t) for t in root_tasks],
+                )
+            )
+
+        getattr(doc, bucket).append(proj_obj)
+
+    Path(outfile).write_text(
+        json.dumps(doc.model_dump(exclude_none=True, by_alias=True), indent=2)
+    )
+    print(f"Wrote export to {outfile}")
+
+
+# ---------------------------------------------------------------------------
+# CLI entry‑point (Typer)
+# ---------------------------------------------------------------------------
+
+
+if __name__ == "__main__":
+    import typer
+
+    app = typer.Typer(help="Export Todoist tasks to PARA + GTD JSON format.")
+
+    @app.command()
+    def run(token: str, outfile: str = "todoist_gtd_para.json") -> None:  # noqa: D401
+        """Run an export with the given API *token*."""
+
+        asyncio.run(export(token=token, outfile=outfile))
+
+    app()

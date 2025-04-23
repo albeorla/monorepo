@@ -3,3 +3,5 @@ bazel-*
 .vscode/
 node_modules/
 .out/
+python/todost/__pycache__/__init__.cpython-311.pyc
+python/todost/__pycache__/todost.cpython-311.pyc

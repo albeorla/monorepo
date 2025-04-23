@@ -1,0 +1,21 @@
+load("@rules_python//python:defs.bzl", "py_library", "py_binary")
+
+# Bazel targets for the todost Python module.
+
+py_library(
+    name = "todost_lib",
+    srcs = ["todost.py"],
+    # External Python dependencies are provided via Bazel's PyPI repos.
+    deps = [
+        "@pypi__httpx//:pkg",
+        "@pypi__pydantic//:pkg",
+        "@pypi__pyyaml//:pkg",
+    ],
+)
+
+py_binary(
+    name = "todost",
+    srcs = ["todost.py"],
+    deps = [":todost_lib"],
+    main = "todost.py",
+)
