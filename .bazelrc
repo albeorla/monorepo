@@ -4,10 +4,13 @@
 common --enable_workspace
 
 # Enable faster builds with remote caching
-build --remote_cache=grpcs://remote.buildbuddy.io
-build --bes_backend=grpcs://remote.buildbuddy.io
-build --bes_results_url=https://app.buildbuddy.io/invocation/
-build --remote_timeout=3600
+# Remote caching (opt‑in).  Activate with `--config=remote` when you have a
+# BuildBuddy API key or another compatible cache endpoint configured.
+
+build:remote --remote_cache=grpcs://remote.buildbuddy.io
+build:remote --bes_backend=grpcs://remote.buildbuddy.io
+build:remote --bes_results_url=https://app.buildbuddy.io/invocation/
+build:remote --remote_timeout=3600
 
 # Required by aspect_rules_ts to pick a skipLibCheck strategy. Faster builds
 # with some loss of d.ts accuracy; suitable for applications.

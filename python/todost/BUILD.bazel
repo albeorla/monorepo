@@ -10,6 +10,7 @@ py_library(
         "@pypi__httpx//:pkg",
         "@pypi__pydantic//:pkg",
         "@pypi__pyyaml//:pkg",
+        "@pypi__typer//:pkg",
     ],
 )
 

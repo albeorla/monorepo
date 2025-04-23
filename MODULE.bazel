@@ -39,6 +39,23 @@ python.toolchain(
 use_repo(python, "python_3_11")
 register_toolchains("@python_3_11//:all")
 
+# ---------------- PyPI dependencies ----------------
+# Parse requirements_lock.txt once and expose each wheel under
+# an `@pypi__<package>` repository.  BUILD targets can depend on
+# these via the usual rules_python pattern `"@pypi__name//:pkg"`.
+
+pip = use_extension("@rules_python//python/extensions:pip.bzl", "pip")
+
+# The name `python_deps` is arbitrary – we follow the convention used in the
+# rules_python docs.
+pip.parse(
+    name = "python_deps",
+    requirements_lock = "//:requirements_lock.txt",
+)
+
+# Make the generated repos visible to the workspace.
+use_repo(pip, "python_deps")
+
 # ---------------- TypeScript ----------------------
 ts_ext = use_extension("@aspect_rules_ts//ts:extensions.bzl", "ext")
 
