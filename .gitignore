@@ -1,6 +1,38 @@
+# Bazel
 bazel-*
+
+# IDE
 .idea/
 .vscode/
+
+# Node.js
 node_modules/
 .out/
+
+# Python
 **/__pycache__/
+**/*.py[cod]
+**/*$py.class
+**/*.so
+.Python
+.venv/
+venv/
+ENV/
+env/
+*.egg-info/
+.pytest_cache/
+.coverage
+htmlcov/
+.mypy_cache/
+
+# CI testing
+.secrets
+event.json
+requirements_lock.txt
+
+# Temporary files
+.DS_Store
+*.swp
+*.swo
+*~
+.nfs*
