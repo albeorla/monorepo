@@ -1,0 +1,44 @@
+# Trivy configuration for security scanning
+
+# Severity thresholds for failing the CI
+severity: ["CRITICAL", "HIGH"]
+
+# Scan formats
+format: "table"
+output: "trivy-results.txt"
+
+# Timeout settings
+timeout: "5m"
+
+# Skip update of vulnerability DB
+skip-update: false
+
+# Scanning targets
+scan:
+  # Uncomment to only scan for specific vulnerabilities
+  # vulnerability-types:
+  #   - "os"
+  #   - "library"
+  
+  # Skip dev dependencies to reduce false positives
+  skip-dev-dependencies: true
+  
+  # Python-specific settings
+  python:
+    file-patterns: 
+      - "requirements*.txt"
+      - "pyproject.toml"
+      - "setup.py"
+    
+# File ignore patterns
+ignore-paths:
+  - "**/*_test.py"
+  - "**/test_*.py"
+  - "**/tests/**"
+  
+# Secret scanning settings
+secret:
+  enable: true
+  # Add custom allowed patterns if needed
+  # allowed-patterns:
+  #   - "EXAMPLE_SECRET_PATTERN"

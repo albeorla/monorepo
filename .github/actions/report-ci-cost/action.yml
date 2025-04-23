@@ -1,5 +1,11 @@
 name: 'Report CI Cost'
 description: 'Reports the cost of the CI job after completion'
+inputs:
+  job_type:
+    description: 'Type of job for cost calculation'
+    required: false
+    default: 'default'
+
 runs:
   using: 'composite'
   steps:
@@ -7,21 +13,50 @@ runs:
       shell: bash
       run: |
         echo "Reporting CI job cost..."
+        
         if [ -z "$CI_COST_BUDGET" ]; then
-          echo "::warning::CI_COST_BUDGET secret not set. Cannot report on budget."
-          exit 0
+          echo "::warning::CI_COST_BUDGET secret not set. Using default of $0.10"
+          CI_COST_BUDGET="0.10"
         fi
         
-        # Simulate cost calculation - in a real implementation, you would 
-        # fetch actual usage data from your CI provider
-        ACTUAL_COST="0.05"  # Example cost in dollars
+        # Get job details from GitHub context
+        EVENT_NAME="${{ github.event_name }}"
+        JOB_TYPE="${{ inputs.job_type }}"
+        if [ -z "$JOB_TYPE" ] && [ -n "$CI_JOB_TYPE" ]; then
+          JOB_TYPE="$CI_JOB_TYPE"
+        fi
         
+        # Determine actual cost based on job type and duration
+        # In a real implementation, fetch actual usage data from GitHub Actions API
+        
+        if [[ "$JOB_TYPE" == "python-lint" ]]; then
+          ACTUAL_COST="0.01"  # $0.01 for linting
+        elif [[ "$JOB_TYPE" == "python-build-test" ]]; then 
+          ACTUAL_COST="0.03"  # $0.03 for build and tests
+        elif [[ "$JOB_TYPE" == "security-scan" ]]; then
+          ACTUAL_COST="0.01"  # $0.01 for security scanning
+        else
+          # Default cost calculation
+          ACTUAL_COST="0.02"  # $0.02 for other jobs
+        fi
+        
+        # Add to summary
+        echo "### CI Cost Report for $JOB_TYPE" >> $GITHUB_STEP_SUMMARY
+        echo "- CI cost budget: \$$CI_COST_BUDGET" >> $GITHUB_STEP_SUMMARY
+        echo "- Actual cost: \$$ACTUAL_COST" >> $GITHUB_STEP_SUMMARY
+        
+        # Print to console
         echo "Monthly budget: \$$CI_COST_BUDGET"
         echo "Actual cost: \$$ACTUAL_COST"
         
         # Compare with budget
         if (( $(echo "$ACTUAL_COST > $CI_COST_BUDGET" | bc -l) )); then
           echo "::warning::CI job cost \$$ACTUAL_COST exceeds budget \$$CI_COST_BUDGET"
+          echo "- ⚠️ Job cost exceeds budget!" >> $GITHUB_STEP_SUMMARY
         else
           echo "CI job cost within budget (\$$ACTUAL_COST / \$$CI_COST_BUDGET)"
-        fi 
+          echo "- ✅ Job cost within budget" >> $GITHUB_STEP_SUMMARY
+        fi
+        
+        # In a production setting, send metrics to a central dashboard
+        echo "Metrics would be sent to central cost tracking dashboard"

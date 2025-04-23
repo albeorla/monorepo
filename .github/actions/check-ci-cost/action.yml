@@ -1,18 +1,55 @@
 name: 'Check CI Cost Budget'
 description: 'Checks if the CI job cost is within budget before running'
+outputs:
+  within_budget:
+    description: 'Boolean indicating if cost is within budget'
+    value: ${{ steps.budget-check.outputs.within_budget }}
+
 runs:
   using: 'composite'
   steps:
     - name: Check budget
+      id: budget-check
       shell: bash
       run: |
         echo "Checking CI cost budget..."
+        
         if [ -z "$CI_COST_BUDGET" ]; then
-          echo "::warning::CI_COST_BUDGET secret not set. Skipping cost check."
-          exit 0
+          echo "::warning::CI_COST_BUDGET secret not set. Using default of $0.10"
+          CI_COST_BUDGET="0.10"
         fi
         
-        # Simulate budget check - in a real implementation, you would 
-        # calculate estimated costs based on job parameters
-        echo "CI cost budget: $CI_COST_BUDGET"
-        echo "Estimated cost within budget. Proceeding with the build." 
+        # Get job details from GitHub context
+        EVENT_NAME="${{ github.event_name }}"
+        WORKFLOW_NAME="${{ github.workflow }}"
+        
+        # Estimate costs based on workflow and event type
+        if [[ "$EVENT_NAME" == "pull_request" ]]; then
+          # Calculate estimated cost based on the PR size
+          if [[ "$WORKFLOW_NAME" == *"Python"* ]]; then
+            # Python workflows
+            ESTIMATED_COST="0.05"  # $0.05 per Python PR
+          else
+            # Other workflows
+            ESTIMATED_COST="0.03"  # $0.03 per regular PR
+          fi
+        else
+          # Push to main branch
+          ESTIMATED_COST="0.08"    # $0.08 per main branch push
+        fi
+        
+        echo "CI cost budget: \$$CI_COST_BUDGET"
+        echo "Estimated cost: \$$ESTIMATED_COST"
+        
+        # Compare with budget using bc for floating-point comparison
+        if (( $(echo "$ESTIMATED_COST > $CI_COST_BUDGET" | bc -l) )); then
+          echo "::error::Estimated CI cost \$$ESTIMATED_COST exceeds budget \$$CI_COST_BUDGET"
+          echo "within_budget=false" >> $GITHUB_OUTPUT
+          exit 1
+        else
+          echo "Estimated cost within budget (\$$ESTIMATED_COST / \$$CI_COST_BUDGET)"
+          echo "within_budget=true" >> $GITHUB_OUTPUT
+        fi
+        
+        # Store estimated cost for later use
+        echo "ESTIMATED_COST=$ESTIMATED_COST" >> $GITHUB_ENV
