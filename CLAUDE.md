@@ -39,7 +39,9 @@ Follow this step-by-step approach for complex tasks:
 4. Implement changes incrementally
 5. Test frequently after each change
 6. Debug as needed
-7. Iterate until the solution is complete and verified
+7. Update documentation to reflect changes
+8. Iterate until the solution is complete and verified
+9. Update project tracking documents in .codex/ directory
 
 ### Effective Code Modification
 When modifying code, use these diff formats for higher success rates:
@@ -107,6 +109,19 @@ This project uses Bazel as the build system. When making changes, ensure they co
 - Run appropriate tests for the language you're modifying
 - Pytest is used for Python testing
 
+## Documentation Practices
+- Keep documentation in sync with code changes
+- Update the following files after completing tasks:
+  - `.codex/plans/sprint_YYYY-MM-DD.md`: Mark completed tasks and update progress metrics
+  - `.codex/dashboard.md`: Update progress percentages and milestone status
+  - `.codex/work_summary_YYYY-MM-DD.md`: Create detailed summaries of completed work
+- Create dedicated documentation for:
+  - New modules (README.md files)
+  - New tools or scripts (usage guides)
+  - Configuration changes (update relevant docs)
+- Include documentation updates in the same commit as code changes
+- Reference PRD requirements (e.g., F-1, F-5) in documentation updates
+
 ## CI/CD
 - Changes should pass CI checks defined in .github/workflows
 - Pre-commit hooks are defined in .pre-commit-config.yaml
@@ -152,10 +167,12 @@ Include:
 * How to report its work (e.g. *write what you changed to `final_output.md`*)
 
 #### Large Projects / Agentic Workflows
-Give Claude more autonomy by seeding a **`.claude/`** workspace:
-1. Add high‑level requirements docs inside `.claude/`
-2. Instruct Claude to persist plans as it works, e.g. `.claude/plan_2025‑04‑23.md`
-3. Ask it to update the main `README.md` with a dated changelog
+Give Claude more autonomy by seeding a **`.codex/`** workspace:
+1. Add high‑level requirements docs inside `.codex/`
+2. Instruct Claude to persist plans as it works, e.g. `.codex/plans/sprint_2025‑04‑23.md`
+3. Track progress in `.codex/dashboard.md` with regular updates
+4. Create work summaries in `.codex/work_summary_YYYY-MM-DD.md` after completing tasks
+5. Ask it to update the main `README.md` with a dated changelog
 
 ### Modes of Interaction
 | Mode | Launch command | Typical use‑case |
