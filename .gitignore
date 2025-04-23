@@ -1,0 +1,5 @@
+bazel-*
+.idea/
+.vscode/
+node_modules/
+.out/

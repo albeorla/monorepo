@@ -1,0 +1,16 @@
+alias(
+    name = "hello_python",
+    actual = "//python/hello_python:hello_python",
+)
+alias(
+    name = "hello_ts",
+    actual = "//ts/hello_ts:hello_ts",
+)
+alias(
+    name = "hello_go",
+    actual = "//go/hello_go:hello_go",
+)
+alias(
+    name = "hello_rust",
+    actual = "//rust/hello_rust:hello_rust",
+)

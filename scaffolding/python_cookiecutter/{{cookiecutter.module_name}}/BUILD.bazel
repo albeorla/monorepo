@@ -1,0 +1,13 @@
+load("@rules_python//python:defs.bzl", "py_library", "py_binary")
+
+py_library(
+    name = "{{cookiecutter.module_name}}_lib",
+    srcs = ["{{cookiecutter.module_name}}.py"],
+)
+
+py_binary(
+    name = "{{cookiecutter.module_name}}",
+    srcs = ["{{cookiecutter.module_name}}.py"],
+    deps = [":{{cookiecutter.module_name}}_lib"],
+    main = "{{cookiecutter.module_name}}.py",
+)

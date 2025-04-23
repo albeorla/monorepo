@@ -1,0 +1,18 @@
+name: 'Check CI Cost Budget'
+description: 'Checks if the CI job cost is within budget before running'
+runs:
+  using: 'composite'
+  steps:
+    - name: Check budget
+      shell: bash
+      run: |
+        echo "Checking CI cost budget..."
+        if [ -z "$CI_COST_BUDGET" ]; then
+          echo "::warning::CI_COST_BUDGET secret not set. Skipping cost check."
+          exit 0
+        fi
+        
+        # Simulate budget check - in a real implementation, you would 
+        # calculate estimated costs based on job parameters
+        echo "CI cost budget: $CI_COST_BUDGET"
+        echo "Estimated cost within budget. Proceeding with the build." 

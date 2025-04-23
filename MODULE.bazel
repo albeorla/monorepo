@@ -1,0 +1,79 @@
+module(
+    name = "monorepo",
+    version = "0.1.0",
+)
+
+# -----------------------------------------------------------------------------
+# External dependencies are declared using Bzlmod.  Each bazel_dep stanza tells
+# Bazel which module to download from the Bazel Central Registry (or other
+# registries if configured) and which version to use.
+# -----------------------------------------------------------------------------
+
+# Core language/toolchain rules
+bazel_dep(name = "rules_python", version = "0.40.0")
+bazel_dep(name = "rules_nodejs", version = "6.0.0")
+bazel_dep(name = "rules_go", version = "0.48.0")
+bazel_dep(name = "rules_rust", version = "0.60.0")
+bazel_dep(name = "rules_oci", version = "1.5.0")
+# TypeScript rules (includes ts_project macro & npm packaging helpers)
+bazel_dep(name = "aspect_rules_ts", version = "3.5.2")
+bazel_dep(name = "aspect_bazel_lib", version = "2.9.3")
+
+# -----------------------------------------------------------------------------
+# Overrides section removed because all dependencies are now available in the
+# Bazel Central Registry.
+
+# -----------------------------------------------------------------------------
+# Toolchain registration via module extensions
+# -----------------------------------------------------------------------------
+
+# ---------------- Python ----------------
+python = use_extension("@rules_python//python/extensions:python.bzl", "python")
+
+# Register Python 3.11 toolchain and mark it as default.
+python.toolchain(
+    python_version = "3.11",
+    is_default = True,
+)
+
+use_repo(python, "python_3_11")
+register_toolchains("@python_3_11//:all")
+
+# ---------------- TypeScript ----------------------
+ts_ext = use_extension("@aspect_rules_ts//ts:extensions.bzl", "ext")
+
+# Install the TypeScript compiler (npm_typescript repo).  Using default latest
+# version provided by rules_ts.
+ts_ext.deps()
+
+use_repo(ts_ext, "npm_typescript")
+
+# ---------------- Node / TypeScript -------------
+node = use_extension("@rules_nodejs//nodejs:extensions.bzl", "node")
+
+node.toolchain(
+    name = "nodejs",
+    node_version = "20.12.0",  # Latest Node LTS (April 2025)
+)
+
+use_repo(node, "nodejs_toolchains")
+register_toolchains("@nodejs_toolchains//:all")
+
+# ---------------- Go -----------------------------
+# The Go rules currently provide a preconfigured toolchain, so just registering
+# it is enough. The default configuration will download and register Go 1.22.
+use_extension("@rules_go//go/private:extensions.bzl", "go_sdk")
+
+# ---------------- Rust ---------------------------
+rust = use_extension("@rules_rust//rust:extensions.bzl", "rust")
+
+# Register the default stable Rust toolchains for the current host platform.
+rust.toolchain()
+
+# ---------------- OCI / Docker -------------------
+# rules_oci does not expose any toolchain extensions yet; declaring the
+# dependency is sufficient.
+
+# -----------------------------------------------------------------------------
+# End of MODULE.bazel
+# -----------------------------------------------------------------------------

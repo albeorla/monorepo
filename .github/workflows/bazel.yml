@@ -1,0 +1,29 @@
+name: Bazel CI
+
+on:
+  pull_request:
+  push:
+    branches: [ "main" ]
+
+jobs:
+  build-test:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+    - uses: bazelbuild/setup-bazelisk@v3
+    
+    - name: Check CI Cost Budget
+      uses: ./.github/actions/check-ci-cost
+      env:
+        CI_COST_BUDGET: ${{ secrets.CI_COST_BUDGET }}
+    
+    - name: Build and test
+      run: |
+        bazel build //...
+        bazel test //...
+
+    - name: Report CI Cost
+      uses: ./.github/actions/report-ci-cost
+      if: always()
+      env:
+        CI_COST_BUDGET: ${{ secrets.CI_COST_BUDGET }}

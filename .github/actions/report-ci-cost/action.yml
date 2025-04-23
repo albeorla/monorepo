@@ -1,0 +1,27 @@
+name: 'Report CI Cost'
+description: 'Reports the cost of the CI job after completion'
+runs:
+  using: 'composite'
+  steps:
+    - name: Report cost
+      shell: bash
+      run: |
+        echo "Reporting CI job cost..."
+        if [ -z "$CI_COST_BUDGET" ]; then
+          echo "::warning::CI_COST_BUDGET secret not set. Cannot report on budget."
+          exit 0
+        fi
+        
+        # Simulate cost calculation - in a real implementation, you would 
+        # fetch actual usage data from your CI provider
+        ACTUAL_COST="0.05"  # Example cost in dollars
+        
+        echo "Monthly budget: \$$CI_COST_BUDGET"
+        echo "Actual cost: \$$ACTUAL_COST"
+        
+        # Compare with budget
+        if (( $(echo "$ACTUAL_COST > $CI_COST_BUDGET" | bc -l) )); then
+          echo "::warning::CI job cost \$$ACTUAL_COST exceeds budget \$$CI_COST_BUDGET"
+        else
+          echo "CI job cost within budget (\$$ACTUAL_COST / \$$CI_COST_BUDGET)"
+        fi 

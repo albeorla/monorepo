@@ -1,0 +1,8 @@
+load("@aspect_rules_ts//ts:defs.bzl", "ts_project")
+
+ts_project(
+    name = "hello_ts",
+    srcs = ["index.ts"],
+    tsconfig = "tsconfig.json",
+    out_dir = "dist",
+)
