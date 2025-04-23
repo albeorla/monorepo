@@ -35,10 +35,10 @@ You MUST plan extensively before each function call, and reflect extensively on 
 Follow this step-by-step approach for complex tasks:
 1. Understand the problem deeply
 2. Investigate the codebase thoroughly
-3. Develop a clear, step-by-step plan
+3. Develop a clear, step-by-step plan (use softwareplanner MCP tool for structured planning)
 4. Implement changes incrementally
 5. Test frequently after each change
-6. Debug as needed
+6. Debug as needed (use sequentialthinking MCP tool for complex problems)
 7. Update documentation to reflect changes
 8. Iterate until the solution is complete and verified
 9. Update project tracking documents in .codex/ directory
@@ -112,9 +112,9 @@ This project uses Bazel as the build system. When making changes, ensure they co
 ## Documentation Practices
 - Keep documentation in sync with code changes
 - Update the following files after completing tasks:
-  - `.codex/plans/sprint_YYYY-MM-DD.md`: Mark completed tasks and update progress metrics
-  - `.codex/dashboard.md`: Update progress percentages and milestone status
-  - `.codex/work_summary_YYYY-MM-DD.md`: Create detailed summaries of completed work
+  - `docs/planning/sprints/sprint_YYYY-MM-DD.md`: Mark completed tasks and update progress metrics
+  - `docs/planning/dashboard.md`: Update progress percentages and milestone status
+  - `docs/reports/work_summary_YYYY-MM-DD.md`: Create detailed summaries of completed work
 - Create dedicated documentation for:
   - New modules (README.md files)
   - New tools or scripts (usage guides)
@@ -139,7 +139,12 @@ This project uses Bazel as the build system. When making changes, ensure they co
 - **Slash Commands**:
   - `/bug`, `/help`, `/init`, `/cost`, `/compact`, `/vim`, `/memory`
   - `/clear`, `/doctor`, `/login`, `/logout`, `/pr_comments`, `/review`, `/terminal-setup`
-- **Special Commands**: `claude mcp` command for MCP capabilities
+- **MCP Features**: 
+  - Check status: `claude mcp` 
+  - Software planning: Use `claude mcp` to work with the softwareplanner tool for structured development planning
+  - Sequential thinking: Use `claude mcp` to access step-by-step problem solving with the sequentialthinking tool
+  - Browser automation: Use `claude mcp` for browser control with browsermcp tool
+  - Whitelist all MCP tools in your configuration for seamless workflow
 
 ## Prompting Guide for Claude
 
@@ -168,11 +173,12 @@ Include:
 
 #### Large Projects / Agentic Workflows
 Give Claude more autonomy by seeding a **`.codex/`** workspace:
-1. Add high‑level requirements docs inside `.codex/`
-2. Instruct Claude to persist plans as it works, e.g. `.codex/plans/sprint_2025‑04‑23.md`
-3. Track progress in `.codex/dashboard.md` with regular updates
-4. Create work summaries in `.codex/work_summary_YYYY-MM-DD.md` after completing tasks
-5. Ask it to update the main `README.md` with a dated changelog
+1. Add high‑level requirements docs inside `docs/planning/`
+2. Instruct Claude to persist plans as it works, e.g. `docs/planning/sprints/sprint_2025‑04‑23.md`
+3. Track progress in `docs/planning/dashboard.md` with regular updates
+4. Create work summaries in `docs/reports/work_summary_YYYY-MM-DD.md` after completing tasks
+5. Store architectural decisions in `docs/decisions/decisions.md`
+6. Ask it to update the main `README.md` with a dated changelog
 
 ### Modes of Interaction
 | Mode | Launch command | Typical use‑case |

@@ -49,12 +49,18 @@ pip = use_extension("@rules_python//python/extensions:pip.bzl", "pip")
 # The name `python_deps` is arbitrary – we follow the convention used in the
 # rules_python docs.
 pip.parse(
-    name = "python_deps",
+    hub_name = "pip",
+    python_version = "3.11",
     requirements_lock = "//:requirements_lock.txt",
 )
 
 # Make the generated repos visible to the workspace.
-use_repo(pip, "python_deps")
+# Expose the generated repositories so they can be referenced from BUILD files.
+# We list each required wheel explicitly for clarity.  If you add a dependency
+# to requirements_lock.txt, remember to add it here as well.
+# Expose each wheel repository produced by `pip.parse`.  These must be listed
+# individually; duplicate calls are fine.
+use_repo(pip, "pip")
 
 # ---------------- TypeScript ----------------------
 ts_ext = use_extension("@aspect_rules_ts//ts:extensions.bzl", "ext")

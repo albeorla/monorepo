@@ -1,13 +1,19 @@
+# =============================================================================
+# Monorepo .gitignore
+# =============================================================================
+
+# -----------------------------------------------------------------------------
+# Build Systems
+# -----------------------------------------------------------------------------
+
 # Bazel
 bazel-*
+.bazelrc.user
+.ijwb
 
-# IDE
-.idea/
-.vscode/
-
-# Node.js
-node_modules/
-.out/
+# -----------------------------------------------------------------------------
+# Programming Languages
+# -----------------------------------------------------------------------------
 
 # Python
 **/__pycache__/
@@ -15,24 +21,66 @@ node_modules/
 **/*$py.class
 **/*.so
 .Python
+*.egg-info/
+
+# Python Environments
 .venv/
+.venv3/
 venv/
 ENV/
 env/
-*.egg-info/
+
+# Python Testing & Linting
 .pytest_cache/
 .coverage
+.coverage.*
+coverage.xml
 htmlcov/
 .mypy_cache/
+.ruff_cache/
 
-# CI testing
+# JavaScript/TypeScript
+node_modules/
+.out/
+.npm/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.pnpm-debug.log*
+
+# Rust
+/target/
+**/*.rs.bk
+Cargo.lock
+
+# -----------------------------------------------------------------------------
+# Development
+# -----------------------------------------------------------------------------
+
+# IDEs and Editors
+.idea/
+.vscode/
+
+# CI/CD
 .secrets
 event.json
 requirements_lock.txt
 
-# Temporary files
+# -----------------------------------------------------------------------------
+# System Files
+# -----------------------------------------------------------------------------
+
+# macOS
 .DS_Store
+
+# Linux
+.directory
+.Trash-*
+.nfs*
+
+# Vim
 *.swp
 *.swo
+
+# General
 *~
-.nfs*

@@ -1,8 +1,15 @@
-# Bazel Monorepo Starter Kit
+# Bazel Monorepo Starter Kit (Updated: 2025-05-06)
 
 Cost–efficient, polyglot build system for Python, TypeScript, (optional) Go and Rust.
 
-See `docs/PRD.md` for full requirements.
+See `docs/PRD.md` for full requirements and project documentation.
+
+## Documentation
+
+- **Product Requirements**: [docs/PRD.md](docs/PRD.md)
+- **Planning & Roadmap**: [docs/planning/](docs/planning/)
+- **Technical Decisions**: [docs/decisions/](docs/decisions/)
+- **Work Summaries**: [docs/reports/](docs/reports/)
 
 ## Quick start
 
@@ -12,7 +19,7 @@ bazel fetch //...
 bazel run //python/hello_python
 ```
 
-For full docs, open the PRD.
+For full project documentation, see the [docs/](docs/) directory.
 
 ## Included Modules
 
