@@ -1,6 +1,14 @@
 ---
 # PARA + GTD Rules for Todoist export
 # This file defines how tasks and projects are categorized and enriched
+#
+# VERSION: 1.0.0
+#
+# This configuration drives the enrichment engine for Todoist exports.
+# It contains three main sections:
+# 1. regex_rules: Patterns to apply to task content and description
+# 2. label_rules: Special handling for specific Todoist labels
+# 3. bucket_overrides: Force specific projects into PARA buckets by ID
 
 # Regex patterns to apply to task content and description
 regex_rules:

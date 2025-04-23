@@ -1,4 +1,4 @@
-"""Todoist→PARA+GTD exporter
+"""Todoist→PARA+GTD exporter.
 
 Implements the full extraction/enrichment logic described in PRD v1.2:
 * Fetch open projects, sections, and tasks via Todoist REST v2.
@@ -11,7 +11,9 @@ Usage (as Bazel target or direct invocation):
 
     bazel run //python/todost:todost -- --token=<TODOIST_API_TOKEN>
 
-Requirements: httpx, pydantic, pyyaml.
+Requirements: httpx, pydantic, pyyaml, typer.
+
+Version: 1.0.0
 """
 
 from __future__ import annotations
@@ -85,6 +87,10 @@ class Project(BaseModel):
 
 
 class ExportDocument(BaseModel):
+    """PARA+GTD export document containing all organization data.
+    
+    Version: 1.0.0
+    """
     meta: dict[str, Any]
     projects: list[Project] = Field(default_factory=list)
     areas: list[Project] = Field(default_factory=list)

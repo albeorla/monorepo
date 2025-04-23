@@ -14,6 +14,14 @@ bazel run //python/hello_python
 
 For full docs, open the PRD.
 
+## Included Modules
+
+### Python Modules
+
+- **hello_python**: Simple "Hello World" example
+- **todost**: Todoist → PARA+GTD exporter for productivity system integration
+  ([documentation](python/todost/README.md))
+
 ## Local Python development
 
 We run everything through **Bazel**, but a small `.venv` makes IDEs and CLI

@@ -1,10 +1,11 @@
-load("@rules_python//python:defs.bzl", "py_library", "py_binary")
+load("@rules_python//python:defs.bzl", "py_library", "py_binary", "py_test")
 
 # Bazel targets for the todost Python module.
 
 py_library(
     name = "todost_lib",
     srcs = ["todost.py"],
+    data = ["para_rules.yaml"],
     # External Python dependencies are provided via Bazel's PyPI repos.
     deps = [
         "@pypi__httpx//:pkg",
@@ -12,6 +13,7 @@ py_library(
         "@pypi__pyyaml//:pkg",
         "@pypi__typer//:pkg",
     ],
+    visibility = ["//visibility:public"],
 )
 
 py_binary(
@@ -19,4 +21,17 @@ py_binary(
     srcs = ["todost.py"],
     deps = [":todost_lib"],
     main = "todost.py",
+)
+
+py_test(
+    name = "todost_test",
+    srcs = ["test_todost.py"],
+    deps = [":todost_lib"],
+)
+
+py_test(
+    name = "integration_test",
+    srcs = ["integration_test_todost.py"],
+    deps = [":todost_lib"],
+    tags = ["integ"],  # Mark as integration test
 )

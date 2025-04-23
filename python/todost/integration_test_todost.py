@@ -1,4 +1,15 @@
-"""Integration tests for the Todoist→PARA+GTD exporter."""
+"""Integration tests for the Todoist→PARA+GTD exporter.
+
+These tests require a valid Todoist API token in the TODOIST_API_TOKEN 
+environment variable. They're designed to run against the actual API
+and verify end-to-end functionality.
+
+To run:
+    TODOIST_API_TOKEN="your_token" pytest -v python/todost/integration_test_todost.py
+    
+Or with Bazel:
+    TODOIST_API_TOKEN="your_token" bazel test --test_tag_filters=integ //python/todost:integration_test
+"""
 
 import os
 import pytest
