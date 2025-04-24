@@ -198,6 +198,16 @@ We use GitHub Container Registry (GHCR) to store and distribute container images
   - Semantic versions: e.g., `1.0.0` for tagged releases
   - PR numbers: e.g., `pr-123` for pull request builds (optional)
 
+### Services with Container Support
+
+The following services currently have container support:
+
+- **hello_python**: Basic Python demo service
+- **todost**: Todoist → PARA+GTD exporter utility
+  - Supports running with Docker directly via `./run_todost.sh --container`
+  - Available at `ghcr.io/albeorla/todost`
+  - Tags: `latest`, `v1.0.0`
+
 ### Publishing Images
 
 #### Local Development
@@ -209,7 +219,10 @@ For local development and testing, use:
 echo $GITHUB_TOKEN | docker login ghcr.io -u $GITHUB_USERNAME --password-stdin
 
 # Build and push with development tag
-bazel run //python/hello_python:hello_python_image_dev_push
+bazel run //python/hello_python:ghcr_development_push
+
+# For todost
+bazel run //python/todost:ghcr_development_push
 ```
 
 #### CI/CD Publishing

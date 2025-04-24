@@ -27,6 +27,7 @@
 - ✅ Updated planning documentation (May 6)
 - ✅ Implemented Python container infrastructure (May 7)
 - ✅ Added container registry integration (May 8)
+- ✅ Implemented todost container support with Docker option (May 8)
 
 ## Upcoming Milestones
 - 🔄 Remote build cache setup (May 9)

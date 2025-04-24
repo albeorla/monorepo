@@ -1,6 +1,5 @@
 load("@rules_python//python:defs.bzl", "py_library", "py_binary", "py_test")
 load("//tools/rules:oci_python.bzl", "py_service_image")
-load("@rules_oci//oci:defs.bzl", "oci_push")
 load("//tools/oci:registry.bzl", "ghcr_push", "ghcr_development_push")
 
 # Bazel targets for the todost Python module.
@@ -24,7 +23,22 @@ py_binary(
     srcs = ["todost.py"],
     deps = [":todost_lib"],
     main = "todost.py",
-    data = ["para_rules.yaml"],
+    data = [
+        "para_rules.yaml",
+        # Include helper files for better user experience
+        ".env.example",
+        "run_todost.sh",
+    ],
+)
+
+# Helper script target for easier invocation
+sh_binary(
+    name = "run_todost",
+    srcs = ["run_todost.sh"],
+    data = [
+        ":todost",
+        ".env.example",
+    ],
 )
 
 py_test(
@@ -40,45 +54,32 @@ py_test(
     tags = ["integ"],  # Mark as integration test
 )
 
-# Create a container image for the todost service
+# Container image for todost
 py_service_image(
     name = "todost_image",
     binary = ":todost",
     base = "@distroless_python_nonroot",
-    # Environment variables for configuration
     env = {
         "LOG_LEVEL": "INFO",
-        "CONFIG_PATH": "/app/para_rules.yaml",
     },
-    # Add labels for better identification
     labels = {
-        "org.opencontainers.image.description": "Todoist to PARA+GTD exporter service",
+        "org.opencontainers.image.description": "Todoist → PARA+GTD Exporter",
         "org.opencontainers.image.version": "1.0.0",
-        "org.opencontainers.image.authors": "Monorepo Team",
     },
+    workdir = "/app",
 )
 
-# Target to load the image into the local Docker daemon
-# Example usage: bazel run //python/todost:todost_image_load
-oci_push(
-    name = "todost_image_load",
-    image = ":todost_image",
-    repository = "localhost/todost",
-)
-
-# Target to push the image to GitHub Container Registry
-# Example usage: bazel run //python/todost:todost_image_push
+# Production push target
 ghcr_push(
-    name = "todost_image_push",
+    name = "ghcr_push",
     image = ":todost_image",
     repository = "todost",
-    tags = ["latest", "1.0.0"],
+    tags = ["latest", "v1.0.0"],
 )
 
-# Target for local development and testing with GHCR
-# Example usage: bazel run //python/todost:todost_image_dev_push
+# Development push target for quick iteration
 ghcr_development_push(
-    name = "todost_image_dev_push",
+    name = "ghcr_development_push",
     image = ":todost_image",
     repository = "todost",
 )

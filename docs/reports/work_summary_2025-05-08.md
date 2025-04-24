@@ -12,6 +12,13 @@
 - **Task 1.2.5**: Added security scanning with Trivy
 - **Task 1.2.6**: Created documentation for registry integration
 
+#### ✅ Story: Todost Container Implementation [PRD-F10-05]
+- **Task 5.1**: Updated todost BUILD.bazel with container image targets
+- **Task 5.2**: Added helper script support for container execution
+- **Task 5.3**: Enhanced documentation for containerized usage
+- **Task 5.4**: Implemented distroless security best practices
+- **Task 5.5**: Added container operation instructions to README
+
 ## Implementation Details
 
 ### Container Registry Selection
@@ -32,6 +39,7 @@
    - Added ghcr_push and ghcr_development_push targets
    - Configured image metadata and tags
    - Maintained backwards compatibility with existing targets
+   - Extended todost with container support in run_todost.sh
 
 4. **CI/CD Integration**:
    - Created container-publish.yml GitHub Actions workflow
