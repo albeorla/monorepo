@@ -71,6 +71,8 @@ Follow this flexible approach for complex tasks, freely transitioning between pl
 7. Update documentation to reflect changes
 8. Iterate until the solution is complete and verified
 9. Update project tracking documents in docs/planning/ and docs/reports/ directories
+10. Commit changes with descriptive commit messages (using the format below)
+11. Signal completion to the user with a summary of what was accomplished
 
 ### Effective Code Modification
 
@@ -157,6 +159,37 @@ This project uses Bazel as the build system. When making changes, ensure they co
   - Configuration changes (update relevant docs)
 - Include documentation updates in the same commit as code changes
 - Reference PRD requirements (e.g., F-1, F-5) in documentation updates
+
+## Git Workflow
+
+- Every task implementation must end with a git commit
+- Follow this commit message format:
+  ```
+  Short descriptive title (1 line, max 72 chars)
+  
+  - Bullet points with specific changes
+  - Another change point
+  
+  🤖 Generated with [Claude Code](https://claude.ai/code)
+  
+  Co-Authored-By: Claude <noreply@anthropic.com>
+  ```
+- Use the git command with a heredoc to ensure proper formatting:
+  ```bash
+  git commit -m "$(cat <<'EOF'
+  Short descriptive title
+  
+  - Bullet point 1
+  - Bullet point 2
+  
+  🤖 Generated with [Claude Code](https://claude.ai/code)
+  
+  Co-Authored-By: Claude <noreply@anthropic.com>
+  EOF
+  )"
+  ```
+- Always check `git status` and `git diff` before committing
+- Always inform the user when you've made a commit and what's in it
 
 ## CI/CD
 
@@ -262,6 +295,13 @@ Give Claude more autonomy by using a structured workflow, freely transitioning b
 4. **Documentation and reporting:**
    - Update the main `README.md` with a dated changelog
    - Create detailed work summaries with implementation details
+
+5. **Phase Transitions:**
+   - End each project phase with a clear git commit
+   - Signal phase completion to the user
+   - Ask the user if you should continue to the next phase
+   - Keyword "proceed to next phase" indicates user wants to move forward
+   - Start the next phase with a new planning session
 
 > **Important**: You should freely alternate between planning and implementation phases throughout the project lifecycle. Don't hesitate to return to the planning phase to refine the approach as your understanding evolves.
 
