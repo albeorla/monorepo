@@ -1,4 +1,4 @@
-load("@rules_python//python:defs.bzl", "py_library", "py_binary")
+load("@rules_python//python:defs.bzl", "py_library", "py_binary", "py_test")
 load("//tools/rules:oci_python.bzl", "py_image")
 load("@rules_oci//oci:defs.bzl", "oci_push")
 load("//tools/oci:registry.bzl", "ghcr_push", "ghcr_development_push")
@@ -13,6 +13,12 @@ py_binary(
     srcs = ["module_python.py"],
     deps = [":hello_python_lib"],
     main = "module_python.py",
+)
+
+py_test(
+    name = "hello_python_test",
+    srcs = ["test_hello_python.py"],
+    deps = [":hello_python_lib"],
 )
 
 # Create a container image for the hello_python binary
@@ -34,7 +40,6 @@ oci_push(
     name = "hello_python_image_load",
     image = ":hello_python_image",
     repository = "localhost/hello_python",
-    format = "docker",
 )
 
 # Target to push the image to GitHub Container Registry

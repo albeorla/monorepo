@@ -97,7 +97,7 @@ rust.toolchain()
 # ---------------- OCI / Docker -------------------
 # Configure OCI tools and extensions
 oci = use_extension("@rules_oci//oci:extensions.bzl", "oci")
-oci.toolchains(versions = ["0.27.0"])
+oci.toolchains()
 use_repo(oci, "oci_toolchains")
 register_toolchains("@oci_toolchains//:all")
 

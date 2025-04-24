@@ -64,7 +64,6 @@ oci_push(
     name = "todost_image_load",
     image = ":todost_image",
     repository = "localhost/todost",
-    format = "docker",
 )
 
 # Target to push the image to GitHub Container Registry

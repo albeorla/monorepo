@@ -80,19 +80,23 @@ def py_image(
     binary_name = binary.split(":")[-1]
     
     # Create the OCI image
-    oci_image(
-        name = name,
-        base = base,
+    args = {
+        "name": name,
+        "base": base,
         # The entrypoint is the Python binary in the image
-        entrypoint = [binary_name],
-        env = default_env,
-        labels = default_labels,
-        ports = ports,
-        user = user,
-        workdir = workdir,
-        visibility = visibility,
-        **kwargs
-    )
+        "entrypoint": [binary_name],
+        "env": default_env,
+        "labels": default_labels,
+        "user": user,
+        "workdir": workdir,
+        "visibility": visibility,
+    }
+    
+    # Add the kwargs
+    args.update(kwargs)
+    
+    # Create the OCI image
+    oci_image(**args)
 
 def py_service_image(name, binary, config_files = None, **kwargs):
     """Creates an OCI image for a Python service with configuration files.
@@ -108,9 +112,9 @@ def py_service_image(name, binary, config_files = None, **kwargs):
     """
     # TODO: Implement handling of config files
     
-    # Get default ports if not specified
-    if "ports" not in kwargs:
-        kwargs["ports"] = ["8080"]
+    # Remove the ports attribute since it's not supported
+    if "ports" in kwargs:
+        kwargs.pop("ports")
     
     # Call the base py_image function
     py_image(
