@@ -19,9 +19,12 @@ See `docs/PRD.md` for full requirements and project documentation.
 bazel fetch //...
 bazel run //python/hello_python
 
-# Build and run container (requires Docker)
+# Build and run container locally (requires Docker)
 bazel run //python/hello_python:hello_python_image_load
 docker run -it --rm localhost/hello_python
+
+# Push container to GitHub Container Registry (requires GHCR auth)
+bazel run //python/hello_python:hello_python_image_push
 ```
 
 For full project documentation, see the [docs/](docs/) directory.

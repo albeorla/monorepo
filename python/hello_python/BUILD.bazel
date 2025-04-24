@@ -1,6 +1,7 @@
 load("@rules_python//python:defs.bzl", "py_library", "py_binary")
 load("//tools/rules:oci_python.bzl", "py_image")
 load("@rules_oci//oci:defs.bzl", "oci_push")
+load("//tools/oci:registry.bzl", "ghcr_push", "ghcr_development_push")
 
 py_library(
     name = "hello_python_lib",
@@ -34,4 +35,21 @@ oci_push(
     image = ":hello_python_image",
     repository = "localhost/hello_python",
     format = "docker",
+)
+
+# Target to push the image to GitHub Container Registry
+# Example usage: bazel run //python/hello_python:hello_python_image_push
+ghcr_push(
+    name = "hello_python_image_push",
+    image = ":hello_python_image",
+    repository = "hello_python",
+    tags = ["latest", "1.0.0"],
+)
+
+# Target for local development and testing with GHCR
+# Example usage: bazel run //python/hello_python:hello_python_image_dev_push
+ghcr_development_push(
+    name = "hello_python_image_dev_push",
+    image = ":hello_python_image",
+    repository = "hello_python",
 )

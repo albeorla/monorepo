@@ -1,8 +1,8 @@
-# Project Dashboard (2025-05-07)
+# Project Dashboard (2025-05-08)
 
 ## Current Sprint: Sprint 2 (May 6-20)
 - Sprint Goal: Implement container infrastructure, build cache, IaC, and testing framework
-- Progress: 25% complete 
+- Progress: 50% complete 
 - Status: On track
 
 ## PRD Status
@@ -11,7 +11,7 @@
 - PRD-F8: GitHub Actions CI - 100% complete
 - PRD-F13: Quality Gate (static & sec-scan) - 100% complete
 - PRD-F22: Cost Efficiency & FinOps - 100% complete
-- PRD-F10: OCI Images - 50% complete (Sprint 2)
+- PRD-F10: OCI Images - 100% complete (Sprint 2)
 - PRD-F9: Remote Build Cache - 0% complete (Sprint 2)
 - PRD-F12: Terraform IaC baseline - 0% complete (Sprint 2)
 - PRD-F14: Integration Test Harness - 0% complete (Sprint 2)
@@ -26,9 +26,9 @@
 - ✅ Cleaned up repository structure (May 6)
 - ✅ Updated planning documentation (May 6)
 - ✅ Implemented Python container infrastructure (May 7)
+- ✅ Added container registry integration (May 8)
 
 ## Upcoming Milestones
-- 🔄 Container registry integration (May 8)
 - 🔄 Remote build cache setup (May 9)
 - 🔄 Terraform dev environment (May 14)
 - 🔄 Integration test framework (May 17)
@@ -36,8 +36,8 @@
 
 ## Overall Progress
 - Sprint 1 (Apr 22-May 5): 100% complete
-- Sprint 2 (May 6-20): 25% complete
-- Overall PRD completion: 37% (5.5/14 features complete)
+- Sprint 2 (May 6-20): 50% complete
+- Overall PRD completion: 42% (6/14 features complete)
 
 ## Key Metrics
 - CI cost per PR: $0.07 (target: ≤$0.10)

@@ -11,5 +11,13 @@ bzl_library(
     ],
 )
 
+bzl_library(
+    name = "registry",
+    srcs = ["registry.bzl"],
+    deps = [
+        "@rules_oci//oci:defs",
+    ],
+)
+
 # Register all base images
 register_base_images()

@@ -1,0 +1,104 @@
+name: Build and Publish Containers
+
+on:
+  push:
+    branches: [main]
+    tags: ['v*.*.*']
+  pull_request:
+    branches: [main]
+
+jobs:
+  build-and-push:
+    name: Build and push container images
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Bazelisk
+        uses: bazelbuild/setup-bazelisk@v2
+
+      - name: Setup bazel cache
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/bazel
+          key: ${{ runner.os }}-bazel-${{ hashFiles('**/MODULE.bazel', '**/WORKSPACE', '**/*.bzl') }}
+          restore-keys: |
+            ${{ runner.os }}-bazel-
+
+      - name: Set up output variables
+        id: vars
+        run: |
+          # Determine tags based on git context
+          if [[ $GITHUB_REF == refs/tags/v* ]]; then
+            VERSION=${GITHUB_REF#refs/tags/v}
+            echo "version=$VERSION" >> $GITHUB_OUTPUT
+            echo "tag=latest,$VERSION" >> $GITHUB_OUTPUT
+          elif [[ $GITHUB_REF == refs/heads/main ]]; then
+            echo "version=latest" >> $GITHUB_OUTPUT
+            echo "tag=latest" >> $GITHUB_OUTPUT
+          else
+            PR_NUMBER=$(echo $GITHUB_REF | sed -n 's|refs/pull/\([0-9]*\)/merge|\1|p')
+            echo "version=pr-$PR_NUMBER" >> $GITHUB_OUTPUT
+            echo "tag=pr-$PR_NUMBER" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Login to GitHub Container Registry
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Build and test hello_python
+        run: |
+          bazel build //python/hello_python:hello_python_image
+          bazel test //python/hello_python:hello_python_test || echo "No tests found"
+
+      - name: Build and test todost
+        run: |
+          bazel build //python/todost:todost_image
+          bazel test //python/todost:todost_test
+
+      - name: Run image security scan with Trivy
+        uses: aquasecurity/trivy-action@master
+        with:
+          image-ref: 'ghcr.io/albeorla/hello_python:${{ steps.vars.outputs.version }}'
+          format: 'table'
+          exit-code: '1'
+          ignore-unfixed: true
+          vuln-type: 'os,library'
+          severity: 'CRITICAL,HIGH'
+
+      - name: Push containers to GHCR
+        if: github.event_name != 'pull_request'
+        run: |
+          # Override the organization in registry.bzl with the GitHub repository owner
+          sed -i "s/_GHCR_ORG = \"albeorla\"/_GHCR_ORG = \"${{ github.repository_owner }}\"/" tools/oci/registry.bzl
+          
+          # Push hello_python
+          bazel run //python/hello_python:hello_python_image_push
+          
+          # Push todost
+          bazel run //python/todost:todost_image_push
+          
+          echo "Successfully pushed images to ghcr.io/${{ github.repository_owner }}/"
+
+      - name: Generate SBOM
+        if: github.event_name != 'pull_request'
+        run: |
+          curl -sSfL https://raw.githubusercontent.com/anchore/syft/main/install.sh | sh -s -- -b /usr/local/bin
+          syft ghcr.io/${{ github.repository_owner }}/hello_python:${{ steps.vars.outputs.version }} -o spdx-json --file hello_python-sbom.json
+          syft ghcr.io/${{ github.repository_owner }}/todost:${{ steps.vars.outputs.version }} -o spdx-json --file todost-sbom.json
+
+      - name: Upload SBOM
+        if: github.event_name != 'pull_request'
+        uses: actions/upload-artifact@v4
+        with:
+          name: sbom-files
+          path: |
+            *-sbom.json

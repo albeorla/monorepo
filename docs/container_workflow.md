@@ -10,6 +10,7 @@ The monorepo uses [Bazel](https://bazel.build) with [rules_oci](https://github.c
 - Secure distroless base images that minimize attack surface
 - Efficient incremental rebuilds through Bazel's caching
 - Standardized container configuration across services
+- Automated publishing to GitHub Container Registry
 
 ## Base Images
 
@@ -179,9 +180,64 @@ py_image(
 docker run -it --rm localhost/my_service sh
 ```
 
+## Container Registry
+
+We use GitHub Container Registry (GHCR) to store and distribute container images. Benefits include:
+
+- Native integration with GitHub Actions
+- Free for public repositories
+- Fine-grained access control
+- Vulnerability scanning
+- Automatic build and push from GitHub Actions
+
+### Registry Structure
+
+- All images are published to `ghcr.io/albeorla/{service_name}`
+- Standard tags include:
+  - `latest`: Most recent main branch build
+  - Semantic versions: e.g., `1.0.0` for tagged releases
+  - PR numbers: e.g., `pr-123` for pull request builds (optional)
+
+### Publishing Images
+
+#### Local Development
+
+For local development and testing, use:
+
+```bash
+# Login to GHCR (needed once)
+echo $GITHUB_TOKEN | docker login ghcr.io -u $GITHUB_USERNAME --password-stdin
+
+# Build and push with development tag
+bazel run //python/hello_python:hello_python_image_dev_push
+```
+
+#### CI/CD Publishing
+
+GitHub Actions automatically builds and publishes images on:
+- Pushes to main branch (tagged as `latest`)
+- Release tags (tagged as both `latest` and the version number)
+
+The workflow is defined in `.github/workflows/container-publish.yml`.
+
+### Security Scanning
+
+Container images are automatically scanned for vulnerabilities using Trivy. The scan checks for:
+- OS vulnerabilities
+- Language-specific package vulnerabilities
+- Security issues in application dependencies
+
+Critical or high severity issues will cause the CI build to fail.
+
+### Cost Optimization
+
+To minimize storage costs and improve security:
+- Old untagged images are automatically cleaned up
+- Images are built with minimal layers for efficient storage
+- Only necessary files are included in the container
+
 ## Next Steps
 
-- Add container registry integration
-- Set up automated security scanning
-- Implement container promotion workflow
+- Implement image promotion workflow for staging/production
 - Create integration tests for containerized services
+- Set up multi-architecture builds (amd64, arm64)

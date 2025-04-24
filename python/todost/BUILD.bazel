@@ -1,6 +1,7 @@
 load("@rules_python//python:defs.bzl", "py_library", "py_binary", "py_test")
 load("//tools/rules:oci_python.bzl", "py_service_image")
 load("@rules_oci//oci:defs.bzl", "oci_push")
+load("//tools/oci:registry.bzl", "ghcr_push", "ghcr_development_push")
 
 # Bazel targets for the todost Python module.
 
@@ -64,4 +65,21 @@ oci_push(
     image = ":todost_image",
     repository = "localhost/todost",
     format = "docker",
+)
+
+# Target to push the image to GitHub Container Registry
+# Example usage: bazel run //python/todost:todost_image_push
+ghcr_push(
+    name = "todost_image_push",
+    image = ":todost_image",
+    repository = "todost",
+    tags = ["latest", "1.0.0"],
+)
+
+# Target for local development and testing with GHCR
+# Example usage: bazel run //python/todost:todost_image_dev_push
+ghcr_development_push(
+    name = "todost_image_dev_push",
+    image = ":todost_image",
+    repository = "todost",
 )
