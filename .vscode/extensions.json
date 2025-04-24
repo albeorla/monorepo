@@ -1,0 +1,18 @@
+{
+  "recommendations": [
+    "ms-python.python",
+    "charliermarsh.ruff",
+    "esbenp.prettier-vscode",
+    "dbaeumer.vscode-eslint",
+    "bazelbuild.vscode-bazel",
+    "ms-python.vscode-pylance",
+    "eamodio.gitlens",
+    "github.vscode-pull-request-github",
+    "rust-lang.rust-analyzer",
+    "golang.go",
+    "visualstudioexptteam.vscodeintellicode",
+    "editorconfig.editorconfig",
+    "streetsidesoftware.code-spell-checker",
+    "mikestead.dotenv"
+  ]
+}

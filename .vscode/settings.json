@@ -1,0 +1,196 @@
+{
+  "files.exclude": {
+    // Hide files in .gitignore by default
+    "**/.git": true,
+    "**/.svn": true,
+    "**/.hg": true,
+    "**/CVS": true,
+    "**/.DS_Store": true,
+    "**/Thumbs.db": true,
+
+    // Bazel-specific excludes
+    "bazel-*": true,
+    ".bazelrc.user": true,
+    ".ijwb": true,
+    "MODULE.bazel.lock": true,
+
+    // Python excludes
+    "**/__pycache__/": true,
+    "**/*.py[cod]": true,
+    "**/*$py.class": true,
+    "**/*.so": true,
+    ".Python": true,
+    "**/*.egg-info/": true,
+    ".pytest_cache/": true,
+    ".coverage": true,
+    ".coverage.*": true,
+    "coverage.xml": true,
+    "htmlcov/": true,
+    ".mypy_cache/": true,
+    ".ruff_cache/": true,
+
+    // Python environments - EXCEPTION: .venv (uncomment to show)
+    // ".venv/": false,
+    ".venv3/": true,
+    "venv/": true,
+    "ENV/": true,
+    "env/": true,
+
+    // JS/TS excludes
+    "node_modules/": true,
+    ".out/": true,
+    ".npm/": true,
+    "**/*.log*": true,
+
+    // Rust excludes
+    "/target/": true,
+    "**/*.rs.bk": true,
+    "Cargo.lock": true,
+
+    // IDE excludes
+    ".idea/": true,
+
+    // CI/CD excludes
+    ".secrets": true,
+    "event.json": true,
+    
+    // Config files rarely needing direct editing
+    ".pre-commit-config.yaml": true,
+    ".eslintrc.js": true,
+    ".bazelrc": true,
+    "pytest.ini": true,
+    "pyproject.toml": true,
+
+    // System files
+    ".directory": true,
+    ".Trash-*": true,
+    ".nfs*": true,
+    "**/*.swp": true,
+    "**/*.swo": true,
+    "**/*~": true
+  },
+  
+  // Exception list - explicitly show these files/folders 
+  // even if they match excluded patterns
+  "files.watcherExclude": {
+    "**/.git/objects/**": true,
+    "**/.git/subtree-cache/**": true,
+    "**/node_modules/**": true,
+    "**/bazel-*/**": true,
+    "**/.pytest_cache/**": true,
+    "**/.ruff_cache/**": true,
+    "**/__pycache__/**": true,
+    "**/MODULE.bazel.lock": true
+  },
+
+  // Hide these in Explorer but keep them in Search
+  "search.exclude": {
+    "**/bazel-*": true,
+    "**/node_modules": true,
+    "**/.ruff_cache": true,
+    "**/.pytest_cache": true,
+    "**/MODULE.bazel.lock": true
+  },
+
+  // Editor settings for this repository
+  "editor.formatOnSave": true,
+  "editor.rulers": [88, 100],
+  "editor.bracketPairColorization.enabled": true,
+  "editor.guides.bracketPairs": "active",
+  "editor.stickyScroll.enabled": true,
+  "editor.wordWrap": "off",
+  "editor.minimap.maxColumn": 88,
+  "editor.suggest.preview": true,
+  "editor.inlineSuggest.enabled": true,
+  "workbench.editor.highlightModifiedTabs": true,
+  "explorer.autoReveal": true,
+  "explorer.compactFolders": false,
+  "explorer.sortOrder": "type",
+  
+  // Python settings
+  "python.linting.enabled": true,
+  "python.linting.pylintEnabled": false,
+  "python.linting.flake8Enabled": false,
+  "python.linting.mypyEnabled": false,
+  "python.linting.banditEnabled": false,
+  "python.linting.prospectorEnabled": false,
+  "python.linting.pylamaEnabled": false,
+  "python.formatting.provider": "none",
+  "python.analysis.typeCheckingMode": "basic",
+  "python.analysis.autoImportCompletions": true,
+  "python.testing.pytestEnabled": true,
+  "python.terminal.activateEnvironment": true,
+  
+  // Git settings
+  "git.autofetch": true,
+  "git.confirmSync": false,
+  "git.enableSmartCommit": true,
+  "gitlens.hovers.currentLine.over": "line",
+  "git.mergeEditor": true,
+  
+  // Terminal settings
+  "terminal.integrated.scrollback": 10000,
+  "terminal.integrated.persistentSessionReviveProcess": "never",
+  
+  // Editor behavior
+  "editor.codeActionsOnSave": {
+    "source.organizeImports": "explicit",
+    "source.fixAll": "explicit"
+  },
+  "javascript.preferences.importModuleSpecifier": "relative",
+  "typescript.preferences.importModuleSpecifier": "relative",
+  "[python]": {
+    "editor.defaultFormatter": "charliermarsh.ruff",
+    "editor.formatOnSave": true,
+    "editor.tabSize": 4
+  },
+  "[typescript]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode",
+    "editor.formatOnSave": true,
+    "editor.tabSize": 2
+  },
+  "[javascript]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode",
+    "editor.formatOnSave": true,
+    "editor.tabSize": 2
+  },
+  "[json]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode",
+    "editor.formatOnSave": true,
+    "editor.tabSize": 2
+  },
+  "[go]": {
+    "editor.formatOnSave": true,
+    "editor.defaultFormatter": "golang.go",
+    "editor.tabSize": 4
+  },
+  "[rust]": {
+    "editor.formatOnSave": true,
+    "editor.defaultFormatter": "rust-lang.rust-analyzer",
+    "editor.tabSize": 4
+  },
+  
+  // Recommended extensions (shown to team members)
+  "extensions.ignoreRecommendations": false,
+  "extensions.recommendedList": [
+    "ms-python.python",
+    "charliermarsh.ruff",
+    "esbenp.prettier-vscode",
+    "dbaeumer.vscode-eslint",
+    "bazelbuild.vscode-bazel",
+    "ms-python.vscode-pylance",
+    "eamodio.gitlens",
+    "github.vscode-pull-request-github",
+    "rust-lang.rust-analyzer",
+    "golang.go",
+    "visualstudioexptteam.vscodeintellicode"
+  ],
+  
+  // Bazel settings
+  "bazel.buildifierFixOnFormat": true,
+  "bazel.enableCodeLens": true,
+  
+  // Terminal tasks - Configure common commands, 
+  // Access via Terminal > Run Task...
+  "tasks.problemMatchers.neverPrompt": true
+}

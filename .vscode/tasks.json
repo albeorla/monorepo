@@ -1,0 +1,84 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "Bazel Build All",
+      "type": "shell",
+      "command": "bazel build //...",
+      "group": "build",
+      "problemMatcher": []
+    },
+    {
+      "label": "Bazel Test All",
+      "type": "shell",
+      "command": "bazel test //...",
+      "group": "test",
+      "problemMatcher": []
+    },
+    {
+      "label": "Bazel Test Python",
+      "type": "shell",
+      "command": "bazel test //python/...",
+      "group": "test",
+      "problemMatcher": []
+    },
+    {
+      "label": "Bazel Test TypeScript",
+      "type": "shell",
+      "command": "bazel test //ts/...",
+      "group": "test",
+      "problemMatcher": []
+    },
+    {
+      "label": "Setup Python venv",
+      "type": "shell",
+      "command": "./scripts/setup_venv.sh",
+      "problemMatcher": []
+    },
+    {
+      "label": "Activate Python venv",
+      "type": "shell",
+      "command": "source .venv/bin/activate",
+      "problemMatcher": []
+    },
+    {
+      "label": "Run Python Linting",
+      "type": "shell",
+      "command": "source .venv/bin/activate && ruff check python/",
+      "group": "test",
+      "problemMatcher": []
+    },
+    {
+      "label": "Run Python Tests",
+      "type": "shell",
+      "command": "source .venv/bin/activate && pytest -q python/",
+      "group": "test",
+      "problemMatcher": []
+    },
+    {
+      "label": "Run Integration Tests",
+      "type": "shell",
+      "command": "bazel test --test_tag_filters=integ //...",
+      "group": "test",
+      "problemMatcher": []
+    },
+    {
+      "label": "Update Bazel Dependencies",
+      "type": "shell",
+      "command": "bazel mod deps",
+      "problemMatcher": []
+    },
+    {
+      "label": "Format Code (pre-commit)",
+      "type": "shell",
+      "command": "pre-commit run --all-files",
+      "problemMatcher": []
+    },
+    {
+      "label": "Run todost Module",
+      "type": "shell",
+      "command": "bazel run //python/todost:todost",
+      "problemMatcher": []
+    }
+  ]
+}

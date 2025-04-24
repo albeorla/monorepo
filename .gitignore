@@ -59,12 +59,10 @@ Cargo.lock
 
 # IDEs and Editors
 .idea/
-.vscode/
 
 # CI/CD
 .secrets
 event.json
-requirements_lock.txt
 
 # -----------------------------------------------------------------------------
 # System Files

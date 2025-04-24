@@ -147,9 +147,9 @@ This project uses Bazel as the build system. When making changes, ensure they co
   └── Epic 2 [PRD-YYY]
       └── Story 2.1 [PRD-YYY-01]
   ```
-- Create task plans in `.codex/plans/`:
-  - Epic plans: `.codex/plans/epic_XXX_name.md`
-  - Sprint plans: `.codex/plans/sprint_YYYY-MM-DD.md`
+- Create task plans in `docs/planning/`:
+  - Epic plans: `docs/planning/epics/epic_XXX_name.md`
+  - Sprint plans: `docs/planning/sprints/sprint_YYYY-MM-DD.md`
 - Track task status with consistent labels:
   - `[NOT STARTED]` - Work not yet begun
   - `[IN PROGRESS]` - Currently being implemented
@@ -161,7 +161,7 @@ This project uses Bazel as the build system. When making changes, ensure they co
   - Estimated vs. actual time
   - % complete for in-progress tasks
   - Weekly progress summaries
-- Weekly task audit: Update all task statuses every Friday
+- Weekly task audit: Update all task statuses every Friday and document in `docs/reports/work_summary_YYYY-MM-DD.md`
 
 ## PRD References
 
@@ -187,7 +187,7 @@ This project uses Bazel as the build system. When making changes, ensure they co
 
 ## Project Tracking
 
-- Maintain a central dashboard in `.codex/dashboard.md`:
+- Maintain a central dashboard in `docs/planning/dashboard.md`:
 
   ```
   # Project Dashboard (YYYY-MM-DD)
@@ -212,7 +212,7 @@ This project uses Bazel as the build system. When making changes, ensure they co
   - Daily: Update in-progress task status
   - Weekly: Full dashboard review and update
   - Bi-weekly: Stakeholder progress report
-- Maintain a decision log in `.codex/decisions.md`:
+- Maintain a decision log in `docs/decisions/decisions.md`:
 
   ```
   # Decision Log
