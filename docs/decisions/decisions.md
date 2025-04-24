@@ -17,6 +17,11 @@
 - **Context**: CI/CD and infrastructure costs can grow unexpectedly in a monorepo
 - **Consequences**: Additional initial work but better long-term cost management
 
+### AD-004: Eisenhower Matrix for Task Prioritization (2025-05-08)
+- **Decision**: Implement Eisenhower Matrix in todost module for task prioritization
+- **Context**: Need a systematic method for categorizing tasks beyond simple priority levels
+- **Consequences**: Enhanced prioritization capabilities with more nuanced task classification
+
 ## Technical Decisions
 
 ### TD-001: Using Cookiecutter and Hygen for Templates (2025-04-23)
@@ -34,6 +39,16 @@
 - **Context**: Need integration with GitHub and cost-effective CI/CD
 - **Consequences**: Reliance on GitHub ecosystem but reduced infrastructure management
 
+### TD-004: GitHub Container Registry for Images (2025-05-07)
+- **Decision**: Use GitHub Container Registry (GHCR) for container image storage
+- **Context**: Need integrated container registry with GitHub workflow support
+- **Consequences**: Improved CI/CD integration, free tier for open source projects
+
+### TD-005: Eisenhower Matrix Implementation Approach (2025-05-08)
+- **Decision**: Implement Eisenhower Matrix using boolean flags for urgency/importance
+- **Context**: Need to extend GTD model with Eisenhower quadrants while maintaining compatibility
+- **Consequences**: More flexible task classification with clear quadrant boundaries
+
 ## Process Decisions
 
 ### PD-001: Agile Sprint Structure (2025-04-22)
@@ -50,3 +65,8 @@
 - **Decision**: Maintain comprehensive docs in dedicated docs directory with PRD references
 - **Context**: Need traceability between requirements and implementation
 - **Consequences**: Improved project tracking and onboarding for new developers
+
+### PD-004: Source of Truth for Planning (2025-05-08)
+- **Decision**: Use sprint files in docs/planning/sprints/ as the primary source of truth
+- **Context**: Need a consistent place to track planned work and progress
+- **Consequences**: Clear accountability and tracking, with dashboard providing a quick overview

@@ -1,7 +1,7 @@
 # Project Dashboard (2025-05-08)
 
 ## Current Sprint: Sprint 2 (May 6-20)
-- Sprint Goal: Implement container infrastructure, build cache, IaC, and testing framework
+- Sprint Goal: Implement container infrastructure, build cache, IaC, testing framework, and todost enhancements
 - Progress: 50% complete 
 - Status: On track
 
@@ -15,6 +15,9 @@
 - PRD-F9: Remote Build Cache - 0% complete (Sprint 2)
 - PRD-F12: Terraform IaC baseline - 0% complete (Sprint 2)
 - PRD-F14: Integration Test Harness - 0% complete (Sprint 2)
+
+## Module Enhancements
+- Todost Eisenhower Matrix: 0% complete (Sprint 2)
 
 ## Recent Milestones
 - ✅ Completed initial repo structure (Apr 22)
@@ -30,7 +33,8 @@
 - ✅ Implemented todost container support with Docker option (May 8)
 
 ## Upcoming Milestones
-- 🔄 Remote build cache setup (May 9)
+- 🔄 Todost Eisenhower Matrix implementation (May 9)
+- 🔄 Remote build cache setup (May 10)
 - 🔄 Terraform dev environment (May 14)
 - 🔄 Integration test framework (May 17)
 - 🔄 Sprint 2 completion (May 20)
@@ -39,6 +43,7 @@
 - Sprint 1 (Apr 22-May 5): 100% complete
 - Sprint 2 (May 6-20): 50% complete
 - Overall PRD completion: 42% (6/14 features complete)
+- Module enhancements: 0% complete
 
 ## Key Metrics
 - CI cost per PR: $0.07 (target: ≤$0.10)

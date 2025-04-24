@@ -19,6 +19,18 @@
 - **Task 5.4**: Implemented distroless security best practices
 - **Task 5.5**: Added container operation instructions to README
 
+## Planned Tasks
+
+### ⏳ Story: Eisenhower Matrix Integration for todost [Enhancement]
+- **Task 1**: Analyze current prioritization model and design Eisenhower Matrix integration
+- **Task 2**: Update GTDFields data model for Eisenhower Matrix
+- **Task 3**: Implement rule-based classification for Eisenhower Matrix
+- **Task 4**: Add date-based urgency detection
+- **Task 5**: Update JSON export format for Eisenhower Matrix
+- **Task 6**: Add unit tests for Eisenhower Matrix functionality
+- **Task 7**: Update documentation with Eisenhower Matrix support
+- **Task 8**: Create planning documents for tracking progress
+
 ## Implementation Details
 
 ### Container Registry Selection
@@ -74,3 +86,4 @@
 2. Implement cost monitoring dashboard
 3. Add more sophisticated image promotion workflows
 4. Create integration tests with containerized services
+5. Implement Eisenhower Matrix prioritization for todost
