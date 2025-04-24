@@ -315,13 +315,34 @@ async def export(
 
 
 if __name__ == "__main__":
+    import os
     import typer
 
     app = typer.Typer(help="Export Todoist tasks to PARA + GTD JSON format.")
 
     @app.command()
-    def run(token: str, outfile: str = "todoist_gtd_para.json") -> None:  # noqa: D401
-        """Run an export with the given API *token*."""
+    def run(token: str = None, outfile: str = None) -> None:  # noqa: D401
+        """Run an export with the given API *token*.
+        
+        You can also use TODOIST_API_TOKEN and TODOST_OUTPUT_FILE environment variables.
+        """
+        # Check for token in environment if not provided as argument
+        if token is None:
+            token = os.environ.get("TODOIST_API_TOKEN")
+            if not token:
+                raise typer.BadParameter(
+                    "No token provided! Either pass as argument or set TODOIST_API_TOKEN environment variable."
+                )
+                
+        # Check for output file in environment if not provided as argument
+        if outfile is None:
+            outfile = os.environ.get("TODOST_OUTPUT_FILE", "todoist_gtd_para.json")
+            
+        # Check log level from environment
+        log_level = os.environ.get("LOG_LEVEL", "INFO")
+        if log_level == "DEBUG":
+            print(f"[DEBUG] Using token: {token[:4]}...{token[-4:]}")
+            print(f"[DEBUG] Output file: {outfile}")
 
         asyncio.run(export(token=token, outfile=outfile))
 
