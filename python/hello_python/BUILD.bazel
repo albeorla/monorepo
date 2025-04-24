@@ -1,4 +1,6 @@
 load("@rules_python//python:defs.bzl", "py_library", "py_binary")
+load("//tools/rules:oci_python.bzl", "py_image")
+load("@rules_oci//oci:defs.bzl", "oci_push")
 
 py_library(
     name = "hello_python_lib",
@@ -10,4 +12,26 @@ py_binary(
     srcs = ["module_python.py"],
     deps = [":hello_python_lib"],
     main = "module_python.py",
+)
+
+# Create a container image for the hello_python binary
+py_image(
+    name = "hello_python_image",
+    binary = ":hello_python",
+    # Use the nonroot distroless image for better security
+    base = "@distroless_python_nonroot",
+    # Add labels for better identification
+    labels = {
+        "org.opencontainers.image.description": "Hello Python example container",
+        "org.opencontainers.image.version": "1.0.0",
+    },
+)
+
+# Target to load the image into the local Docker daemon
+# Example usage: bazel run //python/hello_python:hello_python_image_load
+oci_push(
+    name = "hello_python_image_load",
+    image = ":hello_python_image",
+    repository = "localhost/hello_python",
+    format = "docker",
 )

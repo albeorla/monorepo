@@ -1,0 +1,15 @@
+load("@bazel_skylib//:bzl_library.bzl", "bzl_library")
+load("//tools/oci:base_images.bzl", "register_base_images")
+
+package(default_visibility = ["//visibility:public"])
+
+bzl_library(
+    name = "base_images",
+    srcs = ["base_images.bzl"],
+    deps = [
+        "@rules_oci//oci:pull",
+    ],
+)
+
+# Register all base images
+register_base_images()

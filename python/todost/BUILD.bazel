@@ -1,4 +1,6 @@
 load("@rules_python//python:defs.bzl", "py_library", "py_binary", "py_test")
+load("//tools/rules:oci_python.bzl", "py_service_image")
+load("@rules_oci//oci:defs.bzl", "oci_push")
 
 # Bazel targets for the todost Python module.
 
@@ -21,6 +23,7 @@ py_binary(
     srcs = ["todost.py"],
     deps = [":todost_lib"],
     main = "todost.py",
+    data = ["para_rules.yaml"],
 )
 
 py_test(
@@ -34,4 +37,31 @@ py_test(
     srcs = ["integration_test_todost.py"],
     deps = [":todost_lib"],
     tags = ["integ"],  # Mark as integration test
+)
+
+# Create a container image for the todost service
+py_service_image(
+    name = "todost_image",
+    binary = ":todost",
+    base = "@distroless_python_nonroot",
+    # Environment variables for configuration
+    env = {
+        "LOG_LEVEL": "INFO",
+        "CONFIG_PATH": "/app/para_rules.yaml",
+    },
+    # Add labels for better identification
+    labels = {
+        "org.opencontainers.image.description": "Todoist to PARA+GTD exporter service",
+        "org.opencontainers.image.version": "1.0.0",
+        "org.opencontainers.image.authors": "Monorepo Team",
+    },
+)
+
+# Target to load the image into the local Docker daemon
+# Example usage: bazel run //python/todost:todost_image_load
+oci_push(
+    name = "todost_image_load",
+    image = ":todost_image",
+    repository = "localhost/todost",
+    format = "docker",
 )

@@ -1,6 +1,6 @@
-# Bazel Monorepo Starter Kit (Updated: 2025-05-06)
+# Bazel Monorepo Starter Kit (Updated: 2025-05-07)
 
-Cost–efficient, polyglot build system for Python, TypeScript, (optional) Go and Rust.
+Cost–efficient, polyglot build system for Python, TypeScript, (optional) Go and Rust with container support.
 
 See `docs/PRD.md` for full requirements and project documentation.
 
@@ -10,6 +10,7 @@ See `docs/PRD.md` for full requirements and project documentation.
 - **Planning & Roadmap**: [docs/planning/](docs/planning/)
 - **Technical Decisions**: [docs/decisions/](docs/decisions/)
 - **Work Summaries**: [docs/reports/](docs/reports/)
+- **Container Workflow**: [docs/container_workflow.md](docs/container_workflow.md)
 
 ## Quick start
 
@@ -17,6 +18,10 @@ See `docs/PRD.md` for full requirements and project documentation.
 # install Bazelisk, Python 3.11, Node 18, optionally Go 1.22 and Rust 1.78
 bazel fetch //...
 bazel run //python/hello_python
+
+# Build and run container (requires Docker)
+bazel run //python/hello_python:hello_python_image_load
+docker run -it --rm localhost/hello_python
 ```
 
 For full project documentation, see the [docs/](docs/) directory.
