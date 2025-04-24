@@ -1,4 +1,4 @@
-# Project Roadmap (2025-05-06)
+# Project Roadmap (2025-05-07)
 
 ## Vision
 "Ship polyglot services at the speed of thought—on a budget that scales gracefully."
@@ -40,7 +40,7 @@ Based on the Product Requirements Document (PRD v0.5)
 
 ### P2 Features (Post-v1.1)
 - 🔄 F-9: Remote Build Cache
-- 🔄 F-10: OCI Images
+- 🔄 F-10: OCI Images (50% complete)
 - 🔄 F-15: Observability Hooks
 - 🔄 F-16: Disaster Recovery & Backups
 - 🔄 F-18: Secrets Governance & Rotation
@@ -53,7 +53,7 @@ Based on the Product Requirements Document (PRD v0.5)
 
 ## Current Focus
 Sprint 2 (May 6-20) is focused on:
-1. Container infrastructure (OCI Images)
+1. Container infrastructure (OCI Images) - Phase 1 complete, moving to registry integration
 2. Remote build cache with BuildBuddy
 3. Terraform IaC baseline
 4. Integration test harness
